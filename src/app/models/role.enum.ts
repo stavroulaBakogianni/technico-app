@@ -1,0 +1,4 @@
+export enum Role {
+    PROPERTY_OWNER = "PROPERTY_OWNER",
+    STAFF_MEMBER = "STAFF_MEMBER"
+}
