@@ -1,3 +1,4 @@
+import { Property } from "./property";
 import { Role } from "./role.enum";
 
 export interface User {
@@ -11,4 +12,5 @@ export interface User {
     password: string;
     isDeleted?: boolean;
     role: Role;
+    properties?:Property[];
 }
