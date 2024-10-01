@@ -10,7 +10,7 @@ export interface User {
     phoneNumber?: string;
     email: string;
     password: string;
-    isDeleted?: boolean;
+    deleted?: boolean;
     role: Role;
     properties?:Property[];
 }
