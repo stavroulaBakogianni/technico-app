@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable, retry, throwError } from 'rxjs';
 import { User } from '../models/user';
 
@@ -12,6 +12,19 @@ export class UserService {
   http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/webTechnico/resources/users';
 
+  // Store the current user
+  private currentUser: User | null = null;
+
+  // Method to set the current user
+  setCurrentUser(user: User) {
+    this.currentUser = user;
+  }
+
+  // Method to get the current user
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
   // Create a new user
   createUser(user: User): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/create`, user)
@@ -21,15 +34,15 @@ export class UserService {
       );
   }
 
-// Get all users
-getAllUsers(): Observable<User[]> {
-  return this.http.get<User[]>(`${this.apiUrl}/staffMember/allUsers`)
-    .pipe(
-      retry(1),
-      catchError(this.handleError)
-    );
+  // Get all users
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/staffMember/allUsers`)
+      .pipe(
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
 
-}
   // Get user by VAT
   getUserByVat(vat: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/staffMember/byVat/${vat}`)
@@ -50,13 +63,21 @@ getAllUsers(): Observable<User[]> {
 
   // Get user by email and password (fake login)
   getUserByEmailAndPassword(email: string, password: string): Observable<User> {
-    const body = { email, password };
-    return this.http.post<User>(`${this.apiUrl}/fakeLogin`, body)
+    const body = new HttpParams()
+      .set('email', email)
+      .set('password', password);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+
+    return this.http.post<User>(`${this.apiUrl}/fakeLogin`, body.toString(), { headers })
       .pipe(
         retry(1),
         catchError(this.handleError)
       );
   }
+
 
   // Update an existing user
   updateUser(user: User): Observable<User> {
@@ -89,10 +110,8 @@ getAllUsers(): Observable<User[]> {
   private handleError(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
-
       errorMessage = `Error: ${error.error.message}`;
     } else {
-
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     return throwError(() => errorMessage);
