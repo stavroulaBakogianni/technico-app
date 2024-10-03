@@ -3,10 +3,10 @@ import { User } from '../models/user';
 import { UserService } from '../services/userService';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterOutlet, RouterLink, RouterLinkActive ],
   selector: 'app-user',
   standalone: true,
   templateUrl: './user.component.html',
@@ -38,22 +38,13 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Get the current user from the userService
-    this.currentUser = this.userService.getCurrentUser();
-
-    if (this.currentUser) {
-      this.onEditUser(this.currentUser); // Populate the form with the user's data
-    }
-
-    // Check if the current user is a Staff Member
-    if (this.currentUser?.role === 'STAFF_MEMBER') {
-      this.loadUsers();
-    }
+    this.loadUsers();
   }
 
   // Populate form for editing a user
   onEditUser(user: User) {
     this.userForm.patchValue(user);
+    this.currentUser = user;
   }
 
   // Update user
@@ -63,8 +54,9 @@ export class UserComponent implements OnInit {
       this.userService.updateUser(updatedUser).subscribe({
         next: (user) => {
           console.log("Updated succefully")
-          this.userService.setCurrentUser(user)
           this.currentUser = user
+          this.loadUsers();
+          this.resetForm();
         },
         error: (err) => {
           console.error('Error updating user:', err);
@@ -80,6 +72,7 @@ export class UserComponent implements OnInit {
         next: () => {
           const index = this.users.findIndex(u => u.vat === vat);
           this.users[index].deleted = true;
+          this.resetForm();
         },
         error: (err) => {
           console.error('Error deleting user:', err);
@@ -103,14 +96,29 @@ export class UserComponent implements OnInit {
   }
 
   // Delete user permanently
-  onDeleteUser(vat: string) {
-    this.userService.deleteUserPermanently(vat).subscribe({
+  onDeleteUser(vat: string | undefined) {
+    if (vat){this.userService.deleteUserPermanently(vat).subscribe({
       next: () => {
         this.users = this.users.filter(user => user.vat !== vat); // Remove deleted user from the list
+        this.resetForm();
       },
       error: (err) => {
         console.error('Error deleting user:', err);
       }
+    });}
+  }
+   // Reset the form after action
+   resetForm() {
+    this.userForm.reset({
+      vat: '',
+      name: '',
+      surname: '',
+      address: '',
+      phoneNumber: '',
+      email: '',
+      password: '',
+      role: ''
     });
+    this.currentUser = null; // Clear the current user as well
   }
 }
