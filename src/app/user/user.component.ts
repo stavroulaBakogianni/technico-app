@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule,RouterOutlet, RouterLink, RouterLinkActive ],
+  imports: [CommonModule, ReactiveFormsModule, RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-user',
   standalone: true,
   templateUrl: './user.component.html',
@@ -97,18 +97,23 @@ export class UserComponent implements OnInit {
 
   // Delete user permanently
   onDeleteUser(vat: string | undefined) {
-    if (vat){this.userService.deleteUserPermanently(vat).subscribe({
-      next: () => {
-        this.users = this.users.filter(user => user.vat !== vat); // Remove deleted user from the list
-        this.resetForm();
-      },
-      error: (err) => {
-        console.error('Error deleting user:', err);
+    if (vat) {
+      const confirmed = window.confirm("Are you sure you want to delete?")
+      if (confirmed) {
+        this.userService.deleteUserPermanently(vat).subscribe({
+          next: () => {
+            this.users = this.users.filter(user => user.vat !== vat); // Remove deleted user from the list
+            this.resetForm();
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+          }
+        });
       }
-    });}
+    }
   }
-   // Reset the form after action
-   resetForm() {
+  // Reset the form after action
+  resetForm() {
     this.userForm.reset({
       vat: '',
       name: '',
