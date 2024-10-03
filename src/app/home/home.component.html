@@ -85,4 +85,7 @@
       
     </div>
     </form>
+    <p class="mt-3" *ngIf="currentUser?.role==='STAFF_MEMBER'">
+    To see the user table, click the link below: <a routerLink="/users">View All Users</a>
+    </p>
   </div>
