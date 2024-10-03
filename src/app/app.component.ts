@@ -5,11 +5,12 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from "./login/login.component";
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
+import { HeaderComponent } from './header/header.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, UserComponent, RegisterComponent, LoginComponent, CommonModule, HomeComponent],
+  imports: [RouterOutlet, UserComponent, RegisterComponent, LoginComponent, CommonModule, HomeComponent, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
