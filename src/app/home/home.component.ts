@@ -41,42 +41,46 @@ export class HomeComponent {
     if (this.currentUser) {
       this.onEditUser(this.currentUser); // Populate the form with the user's data
     }
-}
-
- // Populate form for editing a user
- onEditUser(user: User) {
-  this.userForm.patchValue(user);
-}
-
-// Update user
-onUpdateUser() {
-  if (this.userForm.valid && this.currentUser) {
-    const updatedUser: User = { ...this.currentUser, ...this.userForm.value };
-    this.userService.updateUser(updatedUser).subscribe({
-      next: (user) => {
-        console.log("Updated succefully")
-        this.userService.setCurrentUser(user)
-        this.currentUser=user
-      },
-      error: (err) => {
-        console.error('Error updating user:', err);
-      }
-    });
   }
-}
 
-// Delete user safely
-onDeactivateUser() {
-  if (this.currentUser?.vat) {
-    this.userService.deleteUserSafely(this.currentUser?.vat).subscribe({
-      next: () => {
-        console.log("Deactivated succefully")
-        this.router.navigate(['']); 
-      },
-      error: (err) => {
-        console.error('Error deleting user:', err);
-      }
-    });
+  // Populate form for editing a user
+  onEditUser(user: User) {
+    this.userForm.patchValue(user);
   }
-}
+
+  // Update user
+  onUpdateUser() {
+    if (this.userForm.valid && this.currentUser) {
+      const updatedUser: User = { ...this.currentUser, ...this.userForm.value };
+      this.userService.updateUser(updatedUser).subscribe({
+        next: (user) => {
+          console.log("Updated succefully")
+          this.userService.setCurrentUser(user)
+          this.currentUser = user
+        },
+        error: (err) => {
+          console.error('Error updating user:', err);
+        }
+      });
+    }
+  }
+
+  // Delete user safely
+  onDeactivateUser() {
+    if (this.currentUser?.vat) {
+      const confirmed = window.confirm("Are you sure you want to delete?")
+      if (confirmed) {
+        this.userService.deleteUserSafely(this.currentUser?.vat).subscribe({
+          next: () => {
+            console.log("Deactivated succefully")
+            this.router.navigate(['']);
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+          }
+        });
+      }
+
+    }
+  }
 }
