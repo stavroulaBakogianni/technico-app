@@ -32,10 +32,7 @@ export class LoginComponent {
         next: (user) => {
           this.userService.setCurrentUser(user);
           console.log('Login successful', user);
-          if (user.role === "PROPERTY_OWNER") {
-            this.router.navigate(['/home']);
-          }
-          else { this.router.navigate(['/users']); }
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Login failed:', err);
