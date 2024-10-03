@@ -1,5 +1,4 @@
 <div class="container mt-4">
-  <h2 class="text-center mb-4">{{ 'User' }}</h2>
   <form [formGroup]="userForm" (ngSubmit)="onUpdateUser()" class="needs-validation" novalidate  *ngIf="currentUser">
     <div class="form-group mb-3">
       <label for="vat">VAT:</label>
